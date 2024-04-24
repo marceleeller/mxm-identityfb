@@ -1,5 +1,4 @@
-﻿using DataAcess.Data;
-using IdentityModel;
+﻿using IdentityModel;
 using IdentityServer4.EntityFramework.DbContexts;
 using IdentityServer4.EntityFramework.Mappers;
 using IdentityServer4.EntityFramework.Storage;

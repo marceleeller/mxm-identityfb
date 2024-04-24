@@ -1,10 +1,12 @@
 ﻿using DesafioMXMAPI.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DesafioMXMAPI.Controllers;
 
 [Route("api/coffeeshop")]
 [ApiController]
+[Authorize]
 public class CoffeeShopController : ControllerBase
 {
     private readonly ICoffeeShopService _coffeeShopService;
