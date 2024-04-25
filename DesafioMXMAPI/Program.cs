@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using DataAcess.Data;
 using DesafioMXMAPI.Services;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.AspNetCore.Identity;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -25,7 +26,13 @@ service.AddDbContext<ApplicationDbContext>(options =>
 
 service.AddScoped<ICoffeeShopService, CoffeeShopService>();
 
+service.AddCors(options => options.AddPolicy("AllowAll", p => p.AllowAnyOrigin()
+             .AllowAnyMethod()
+             .AllowAnyHeader()));
+
 var app = builder.Build();
+
+app.UseCors("AllowAll");
 
 app.UseAuthentication();
 app.UseAuthorization();

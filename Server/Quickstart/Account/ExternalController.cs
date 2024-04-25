@@ -7,6 +7,7 @@ using IdentityServer4.Test;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
@@ -21,27 +22,25 @@ namespace IdentityServerHost.Quickstart.UI
     [AllowAnonymous]
     public class ExternalController : Controller
     {
-        private readonly TestUserStore _users;
         private readonly IIdentityServerInteractionService _interaction;
         private readonly IClientStore _clientStore;
         private readonly ILogger<ExternalController> _logger;
         private readonly IEventService _events;
+        private readonly SignInManager<IdentityUser> _signInManager;
 
         public ExternalController(
             IIdentityServerInteractionService interaction,
             IClientStore clientStore,
             IEventService events,
             ILogger<ExternalController> logger,
-            TestUserStore users = null)
+            SignInManager<IdentityUser> signInManager)
         {
-            // if the TestUserStore is not in DI, then we'll just use the global users collection
-            // this is where you would plug in your own custom identity management library (e.g. ASP.NET Identity)
-            _users = users ?? new TestUserStore(TestUsers.Users);
-
             _interaction = interaction;
             _clientStore = clientStore;
             _logger = logger;
             _events = events;
+            _signInManager = signInManager;
+
         }
 
         /// <summary>
@@ -87,38 +86,58 @@ namespace IdentityServerHost.Quickstart.UI
                 throw new Exception("External authentication error");
             }
 
-            if (_logger.IsEnabled(LogLevel.Debug))
+            // retrieve claims of the external user
+            var externalUser = result.Principal;
+            if (externalUser == null)
             {
-                var externalClaims = result.Principal.Claims.Select(c => $"{c.Type}: {c.Value}");
-                _logger.LogDebug("External claims: {@claims}", externalClaims);
+                throw new Exception("External authentication error");
             }
 
-            // lookup our user and external provider info
-            var (user, provider, providerUserId, claims) = FindUserFromExternalProvider(result);
+            // retrieve claims of the external user
+            var claims = externalUser.Claims.ToList();
+
+            // try to determine the unique id of the external user - the most common claim type for that are the sub claim and the NameIdentifier
+            // depending on the external provider, some other claim type might be used
+            var userIdClaim = claims.FirstOrDefault(x => x.Type == JwtClaimTypes.Subject);
+            if (userIdClaim == null)
+            {
+                userIdClaim = claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier);
+            }
+            if (userIdClaim == null)
+            {
+                throw new Exception("Unknown userid");
+            }
+
+            var externalUserId = userIdClaim.Value;
+            var externalProvider = userIdClaim.Issuer;
+
+            // use externalProvider and externalUserId to find your user, or provision a new user
+            // use externalProvider and externalUserId to find your user
+            var user = await _signInManager.UserManager.FindByLoginAsync(externalProvider, externalUserId);
+
+            // if the user is not found, provision a new user
             if (user == null)
             {
-                // this might be where you might initiate a custom workflow for user registration
-                // in this sample we don't show how that would be done, as our sample implementation
-                // simply auto-provisions new external user
-                user = AutoProvisionUser(provider, providerUserId, claims);
+                user = new IdentityUser
+                {
+                    // Generate a unique username using the externalProvider and externalUserId
+                    UserName = $"{externalProvider}_{externalUserId}"
+                };
+                var createResult = await _signInManager.UserManager.CreateAsync(user);
+                if (!createResult.Succeeded)
+                {
+                    throw new Exception("Error creating new user");
+                }
+
+                var addLoginResult = await _signInManager.UserManager.AddLoginAsync(user, new UserLoginInfo(externalProvider, externalUserId, externalProvider));
+                if (!addLoginResult.Succeeded)
+                {
+                    throw new Exception("Error adding login for new user");
+                }
             }
 
-            // this allows us to collect any additional claims or properties
-            // for the specific protocols used and store them in the local auth cookie.
-            // this is typically used to store data needed for signout from those protocols.
-            var additionalLocalClaims = new List<Claim>();
-            var localSignInProps = new AuthenticationProperties();
-            ProcessLoginCallback(result, additionalLocalClaims, localSignInProps);
-            
-            // issue authentication cookie for user
-            var isuser = new IdentityServerUser(user.SubjectId)
-            {
-                DisplayName = user.Username,
-                IdentityProvider = provider,
-                AdditionalClaims = additionalLocalClaims
-            };
-
-            await HttpContext.SignInAsync(isuser, localSignInProps);
+            // sign in the user with SignInManager
+            await _signInManager.SignInAsync(user, isPersistent: false);
 
             // delete temporary cookie used during external authentication
             await HttpContext.SignOutAsync(IdentityServerConstants.ExternalCookieAuthenticationScheme);
@@ -126,24 +145,17 @@ namespace IdentityServerHost.Quickstart.UI
             // retrieve return URL
             var returnUrl = result.Properties.Items["returnUrl"] ?? "~/";
 
-            // check if external login is in the context of an OIDC request
-            var context = await _interaction.GetAuthorizationContextAsync(returnUrl);
-            await _events.RaiseAsync(new UserLoginSuccessEvent(provider, providerUserId, user.SubjectId, user.Username, true, context?.Client.ClientId));
-
-            if (context != null)
+            // validate return URL and redirect back to authorization endpoint or a local page
+            if (_interaction.IsValidReturnUrl(returnUrl) || Url.IsLocalUrl(returnUrl))
             {
-                if (context.IsNativeClient())
-                {
-                    // The client is native, so this change in how to
-                    // return the response is for better UX for the end user.
-                    return this.LoadingPage("Redirect", returnUrl);
-                }
+                return Redirect(returnUrl);
             }
 
-            return Redirect(returnUrl);
+            return Redirect("~/");
+
         }
 
-        private (TestUser user, string provider, string providerUserId, IEnumerable<Claim> claims) FindUserFromExternalProvider(AuthenticateResult result)
+        /*private (TestUser user, string provider, string providerUserId, IEnumerable<Claim> claims) FindUserFromExternalProvider(AuthenticateResult result)
         {
             var externalUser = result.Principal;
 
@@ -171,7 +183,7 @@ namespace IdentityServerHost.Quickstart.UI
         {
             var user = _users.AutoProvisionUser(provider, providerUserId, claims.ToList());
             return user;
-        }
+        }*/
 
         // if the external login is OIDC-based, there are certain things we need to preserve to make logout work
         // this will be different for WS-Fed, SAML2p or other protocols

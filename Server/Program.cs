@@ -1,3 +1,4 @@
+using IdentityServer4;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Server;
@@ -13,6 +14,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 var assembly = typeof(Program).Assembly.GetName().Name;
 var defaultConnectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+var configuration = builder.Configuration;
 
 if (seed)
 {
@@ -46,9 +48,18 @@ service.AddIdentityServer()
     })
     .AddDeveloperSigningCredential();
 
+
 service.AddCors(options => options.AddPolicy("AllowAll", p => p.AllowAnyOrigin()
              .AllowAnyMethod()
              .AllowAnyHeader()));
+
+service.AddAuthentication()
+    .AddFacebook(options =>
+    {
+        options.SignInScheme = IdentityServerConstants.ExternalCookieAuthenticationScheme;
+        options.AppId = configuration["Authentication:Facebook:AppId"];
+        options.AppSecret = configuration["Authentication:Facebook:AppSecret"];
+    });
 
 builder.Services.AddControllersWithViews();
 

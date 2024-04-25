@@ -185,6 +185,8 @@ namespace IdentityServerHost.Quickstart.UI
         [HttpGet]
         public async Task<IActionResult> Logout(string logoutId)
         {
+
+            await _signInManager.SignOutAsync();
             // build a model so the logout page knows what to display
             var vm = await BuildLogoutViewModelAsync(logoutId);
 
