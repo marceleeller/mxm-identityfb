@@ -46,17 +46,24 @@ service.AddIdentityServer()
     })
     .AddDeveloperSigningCredential();
 
+service.AddCors(options => options.AddPolicy("AllowAll", p => p.AllowAnyOrigin()
+             .AllowAnyMethod()
+             .AllowAnyHeader()));
+
 builder.Services.AddControllersWithViews();
 
 
 var app = builder.Build();
 app.UseStaticFiles();
+app.UseCors("AllowAll");
 app.UseRouting();
 app.UseIdentityServer();
 app.UseAuthorization();
 app.UseEndpoints(endpoints =>
-    {
-        endpoints.MapControllers();
-    });
+{
+    endpoints.MapControllerRoute(
+        name: "default",
+        pattern: "{controller=Home}/{action=Index}/{id?}");
+});
 
 app.Run();

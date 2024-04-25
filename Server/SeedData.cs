@@ -100,6 +100,13 @@ public class SeedData
 
     private static void EnsureSeedData(ConfigurationDbContext context)
     {
+        // Clear existing data
+        context.Clients.RemoveRange(context.Clients);
+        context.IdentityResources.RemoveRange(context.IdentityResources);
+        context.ApiScopes.RemoveRange(context.ApiScopes);
+        context.ApiResources.RemoveRange(context.ApiResources);
+        context.SaveChanges();
+
         if (!context.Clients.Any())
         {
             foreach (var client in Config.Clients.ToList())

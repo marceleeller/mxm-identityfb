@@ -10,6 +10,7 @@ public class Config
         {
             new IdentityResources.OpenId(),
             new IdentityResources.Profile(),
+            new IdentityResources.Email(),
             new IdentityResource
             {
                 Name = "role",
@@ -27,8 +28,8 @@ public class Config
             new ApiResource("DesafioMXMAPI")
             {
                 Scopes = { "DesafioMXMAPI.read", "DesafioMXMAPI.write" },
-                ApiSecrets = new List<Secret> { new Secret("ScopeSecret".Sha256()) },
-                UserClaims = new List<string> { "role" }
+/*                ApiSecrets = new List<Secret> { new Secret("ScopeSecret".Sha256()) },
+                UserClaims = new List<string> { "role" }*/
             }
         };
 
@@ -44,20 +45,18 @@ public class Config
                 ClientSecrets = { new Secret("ClientSecret1".Sha256()) },
                 AllowedScopes = { "DesafioMXMAPI.read", "DesafioMXMAPI.write" }
             },
-            // interactive client using code flow + pkce
-            new Client
-            {
-                ClientId = "interactive",
-                ClientSecrets = { new Secret("ClientSecret1".Sha256()) },
+
+            new Client {
+                ClientId = "angular",
+                ClientName = "Angular",
                 AllowedGrantTypes = GrantTypes.Code,
-                RedirectUris = { "https://localhost:5444/signin-oidc" },
-                FrontChannelLogoutUri = "https://localhost:5444/signout-oidc",
-                PostLogoutRedirectUris = { "https://localhost:5444/signout-callback-oidc" },
-                AllowOfflineAccess = true,
-                AllowedScopes = { "openid", "profile", "DesafioMXMAPI.read" },
                 RequirePkce = true,
-                RequireConsent = true,
-                AllowPlainTextPkce = false
+                AllowedScopes = { "openid", "profile", "email", "DesafioMXMAPI.read" },
+                RedirectUris = {"http://localhost:4200/"},
+                PostLogoutRedirectUris = {"http://localhost:4200/"},
+                AllowedCorsOrigins = {"http://localhost:4200"},
+                AllowAccessTokensViaBrowser = true,
+                RequireConsent = false,
             }
         };
 }
