@@ -53,6 +53,7 @@ public class Config
                 RequireClientSecret = false,
                 RequirePkce = true,
                 AllowedScopes = { "openid", "profile", "email", "DesafioMXMAPI.read" },
+                AlwaysIncludeUserClaimsInIdToken = true,
                 RedirectUris = {"http://localhost:4200"},
                 PostLogoutRedirectUris = {"http://localhost:4200"},
                 AllowedCorsOrigins = {"http://localhost:4200"},
