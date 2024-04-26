@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { AuthModule } from 'angular-auth-oidc-client';
+import { AuthModule, LogLevel } from 'angular-auth-oidc-client';
 
 
 @NgModule({
@@ -11,9 +11,9 @@ import { AuthModule } from 'angular-auth-oidc-client';
               clientId: 'angular',
               scope: 'openid profile email DesafioMXMAPI.read', // 'openid profile offline_access ' + your scopes
               responseType: 'code',
-              // silentRenew: false,
-              // useRefreshToken: false,
-              // renewTimeBeforeTokenExpiresInSeconds: 30,
+              silentRenew: false,
+              useRefreshToken: false,
+              renewTimeBeforeTokenExpiresInSeconds: 30
           }
       })],
     exports: [AuthModule],

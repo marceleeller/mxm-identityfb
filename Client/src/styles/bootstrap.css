@@ -1,0 +1,49 @@
+@import url(./color-variables.css);
+
+.btn-primary {
+  background-color: var(--primary-color);
+  border: 1px solid var(--primary-color);
+  height: 50px;
+  box-shadow: 0 4px 6px  rgba(0, 0, 0, 0.2);
+}
+
+.btn-primary:hover {
+  background-color: white;
+  border: 1px solid var(--primary-color);
+  color: var(--primary-color);
+}
+
+.btn-primary:active, .btn-outline-primary:active {
+  background-color: var(--darker-primary-color) !important;
+  color: white !important;
+  border: 2px solid var(--darker-primary-color) !important;
+}
+
+.btn:disabled {
+  background-color: var(--primary-color);
+  border: 1px solid var(--primary-color);
+  opacity: .9;
+  box-shadow: none !important;
+}
+
+.form-control {
+  height: 50px;
+  font-size: 14px;
+}
+
+.ng-invalid.ng-dirty:not(form)  {
+  border: 1px solid red;
+}
+
+.ng-invalid.ng-dirty:not(form):focus {
+  border: 1px solid red !important;
+  box-shadow: 0 0 0 0.2rem rgba(255, 51, 51, 0.356) !important;
+}
+
+.invalid-feedback {
+  display: block;
+  position: absolute;
+  margin-top: .3rem;
+  color: red;
+  font-size: 10px;
+}
