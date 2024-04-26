@@ -9,12 +9,15 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using static System.Formats.Asn1.AsnWriter;
 
 namespace IdentityServerHost.Quickstart.UI
 {
@@ -118,15 +121,34 @@ namespace IdentityServerHost.Quickstart.UI
             // if the user is not found, provision a new user
             if (user == null)
             {
+                // try to find the email and name claims
+                var emailClaim = claims.FirstOrDefault(x => x.Type == ClaimTypes.Email);
+                var nameClaim = claims.FirstOrDefault(x => x.Type == ClaimTypes.Name);
+
+                var externalUserEmail = emailClaim.Value;
+                var externalUserName = nameClaim.Value;
+
                 user = new IdentityUser
                 {
                     // Generate a unique username using the externalProvider and externalUserId
-                    UserName = $"{externalProvider}_{externalUserId}"
+                    UserName = $"{externalProvider}_{externalUserId}",
+                    Email = externalUserEmail,
                 };
                 var createResult = await _signInManager.UserManager.CreateAsync(user);
                 if (!createResult.Succeeded)
                 {
                     throw new Exception("Error creating new user");
+                }
+                var claimsResult = await _signInManager.UserManager.AddClaimsAsync(
+                    user,
+                    new Claim[]
+                    {
+                        new Claim(JwtClaimTypes.Name, externalUserName)
+                    }
+                );
+                if (!claimsResult.Succeeded)
+                {
+                    throw new Exception("Error adding claims for new user");
                 }
 
                 var addLoginResult = await _signInManager.UserManager.AddLoginAsync(user, new UserLoginInfo(externalProvider, externalUserId, externalProvider));
@@ -154,36 +176,6 @@ namespace IdentityServerHost.Quickstart.UI
             return Redirect("~/");
 
         }
-
-        /*private (TestUser user, string provider, string providerUserId, IEnumerable<Claim> claims) FindUserFromExternalProvider(AuthenticateResult result)
-        {
-            var externalUser = result.Principal;
-
-            // try to determine the unique id of the external user (issued by the provider)
-            // the most common claim type for that are the sub claim and the NameIdentifier
-            // depending on the external provider, some other claim type might be used
-            var userIdClaim = externalUser.FindFirst(JwtClaimTypes.Subject) ??
-                              externalUser.FindFirst(ClaimTypes.NameIdentifier) ??
-                              throw new Exception("Unknown userid");
-
-            // remove the user id claim so we don't include it as an extra claim if/when we provision the user
-            var claims = externalUser.Claims.ToList();
-            claims.Remove(userIdClaim);
-
-            var provider = result.Properties.Items["scheme"];
-            var providerUserId = userIdClaim.Value;
-
-            // find external user
-            var user = _users.FindByExternalProvider(provider, providerUserId);
-
-            return (user, provider, providerUserId, claims);
-        }
-
-        private TestUser AutoProvisionUser(string provider, string providerUserId, IEnumerable<Claim> claims)
-        {
-            var user = _users.AutoProvisionUser(provider, providerUserId, claims.ToList());
-            return user;
-        }*/
 
         // if the external login is OIDC-based, there are certain things we need to preserve to make logout work
         // this will be different for WS-Fed, SAML2p or other protocols
