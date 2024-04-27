@@ -16,7 +16,9 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
+using Server.Domains.Dtos;
 using System;
+using System.Data;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -51,6 +53,38 @@ namespace IdentityServerHost.Quickstart.UI
             _schemeProvider = schemeProvider;
             _events = events;
             _signInManager = signInManager;
+        }
+
+        [HttpPost]
+        [Route("api/register")]
+        public async Task<IActionResult> Register([FromBody] RegisterRequestDto model)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+
+            var user = new IdentityUser { 
+                UserName = model.Email, 
+                Email = model.Email
+            };
+
+            var result = await _signInManager.UserManager.CreateAsync(user, model.Password);
+
+            if (!result.Succeeded) 
+                return BadRequest(result.Errors);
+
+            var claimsResult = await _signInManager.UserManager.AddClaimsAsync(
+                    user,
+                    new Claim[]
+                    {
+                        new Claim(JwtClaimTypes.Name, model.Name)
+                    }
+                );
+            if (!claimsResult.Succeeded)
+                return BadRequest("Error adding claims for new user");
+
+
+            return Ok(new { message = "Success" });
         }
 
         /// <summary>

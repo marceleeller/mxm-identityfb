@@ -1,0 +1,25 @@
+h1 {
+  color: var(--primary-color);
+  font-size: 55px;
+  font-weight: 500;
+}
+p {
+  margin: 0;
+  font-size: 21px;
+}
+main {
+  background-color: var(--secondary-color);
+  height: calc(100vh - 66px);
+}
+
+@media (max-width: 992px) {
+  h1 {
+    font-size: 40px;
+  }
+}
+
+@media (max-width: 768px) {
+  h1 {
+    font-size: 30px;
+  }
+}

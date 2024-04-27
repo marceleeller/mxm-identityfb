@@ -6,14 +6,17 @@ import { AuthModule, LogLevel } from 'angular-auth-oidc-client';
     imports: [AuthModule.forRoot({
         config: {
               authority: 'https://localhost:5443',
-              redirectUrl: window.location.origin,
+              redirectUrl: 'http://localhost:4200/auth-callback',
+              postLoginRoute: '/auth-callback',
+              unauthorizedRoute: '/home',
               postLogoutRedirectUri: window.location.origin,
               clientId: 'angular',
               scope: 'openid profile email DesafioMXMAPI.read', // 'openid profile offline_access ' + your scopes
               responseType: 'code',
               silentRenew: false,
               useRefreshToken: false,
-              renewTimeBeforeTokenExpiresInSeconds: 30
+              renewTimeBeforeTokenExpiresInSeconds: 30,
+              secureRoutes: ['https://localhost:5445/api'],
           }
       })],
     exports: [AuthModule],

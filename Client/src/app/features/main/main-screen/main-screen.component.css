@@ -1,0 +1,79 @@
+.bg {
+  position: absolute;
+  height: 150px;
+  width: 100%;
+  background-color: var(--secondary-color);
+}
+
+.bg img {
+  max-width: 200px;
+  max-height: 60px;
+}
+
+.container {
+  padding-top: 80px;
+}
+
+.main-card {
+  max-width: 1200px;
+  min-height: 70vh;
+  width: 100%;
+  box-shadow: 0 4px 64px  rgba(0, 0, 0, 0.05);
+  padding: 1.5rem;
+}
+
+.profile {
+  position: absolute;
+  top: -55px;
+  width: 300px;
+  height: 150px;
+  margin: 0;
+}
+
+.profile-picture {
+  width: 120px;
+  height: 120px;
+  background-color: #EDAB5D;
+  border-radius: 50%;
+  border: 6px solid white;
+}
+
+.profile-picture img {
+  width: 90px;
+}
+
+.profile-name p {
+  font-size: 20px;
+  font-weight: 600;
+  margin: 0;
+}
+
+.coffeeshops-cards {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.btn {
+  min-width: 150px;
+}
+
+@media (max-width: 768px) {
+  .bg {
+    height: 200px;
+  }
+  .profile {
+    width: 100%;
+    margin-left: -1.5rem;
+  }
+
+  .container {
+    padding-top: 120px;
+  }
+
+  .btn {
+    margin-top: 70px;
+  }
+}

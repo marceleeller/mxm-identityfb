@@ -57,54 +57,11 @@ public class SeedData
 
         var ctx = scope.ServiceProvider.GetService<AspNetIdentityDbContext>();
         ctx.Database.Migrate();
-        EnsureUsers(scope);
     }
-
-    private static void EnsureUsers(IServiceScope scope)
-    {
-        var userMgr = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
-
-        var angella = userMgr.FindByNameAsync("angella").Result;
-        if (angella == null)
-        {
-            angella = new IdentityUser
-            {
-                UserName = "angella",
-                Email = "angella.freeman@email.com",
-                EmailConfirmed = true
-            };
-            var result = userMgr.CreateAsync(angella, "Pass123$").Result;
-            if (!result.Succeeded)
-            {
-                throw new Exception(result.Errors.First().Description);
-            }
-
-            result =
-                userMgr.AddClaimsAsync(
-                    angella,
-                    new Claim[]
-                    {
-                            new Claim(JwtClaimTypes.Name, "Angella Freeman"),
-                            new Claim(JwtClaimTypes.GivenName, "Angella"),
-                            new Claim(JwtClaimTypes.FamilyName, "Freeman"),
-                            new Claim(JwtClaimTypes.WebSite, "http://angellafreeman.com"),
-                            new Claim("location", "somewhere")
-                    }
-                ).Result;
-            if (!result.Succeeded)
-            {
-                throw new Exception(result.Errors.First().Description);
-            }
-        }
-    }
-
     private static void EnsureSeedData(ConfigurationDbContext context)
     {
         // Clear existing data
         context.Clients.RemoveRange(context.Clients);
-        context.IdentityResources.RemoveRange(context.IdentityResources);
-        context.ApiScopes.RemoveRange(context.ApiScopes);
-        context.ApiResources.RemoveRange(context.ApiResources);
         context.SaveChanges();
 
         if (!context.Clients.Any())

@@ -1,0 +1,22 @@
+header {
+  background-color: var(--secondary-color);
+}
+
+.header-container {
+  width: 190px;
+  height: 50px;
+  border-radius: 6px;
+}
+
+.header-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin: 0;
+  color: var(--primary-color);
+}
+
+@media (max-width: 576px) {
+  .header-container {
+    margin-left: 8px;
+  }
+}

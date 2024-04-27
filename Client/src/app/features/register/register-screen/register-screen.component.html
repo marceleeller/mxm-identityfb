@@ -1,1 +1,78 @@
-<p>register-screen works!</p>
+<app-header></app-header>
+
+<main>
+  <app-shell>
+    <div class="row">
+      <div class="col-8">
+        <p>Bem vindo ao <strong>DesafioMXM</strong></p>
+      </div>
+      <div class="col-4 px-0">
+        <p class="ask-title">Já tem uma conta?</p>
+        <a routerLink="/home" class="register-text">Volte para entrar</a>
+      </div>
+    </div>
+    <h1 class="card-title">Registrar</h1>
+
+      <div class="card-body d-flex flex-column justify-content-center gap-5">
+            <!-- Register form -->
+        <form class="d-flex flex-column mt-4" [formGroup]="registerForm" (ngSubmit)="register()">
+          <div class="mb-4">
+            <label for="email" class="mb-2">Insira seu email</label>
+            <input type="email" class="form-control" formControlName="email" placeholder="endereço de email">
+            <div class="invalid-feedback" *ngIf="this.registerForm.get('email')?.dirty && this.registerForm.get('email')?.hasError('required')">
+              Email é obrigatório.
+            </div>
+            <div class="invalid-feedback" *ngIf="this.registerForm.get('email')?.hasError('email')">
+              Insira um email válido.
+            </div>
+          </div>
+          <div class="row">
+            <div class="col">
+              <div class="mb-4">
+                <label for="name" class="mb-2">Nome</label>
+                <input type="text" class="form-control" formControlName="name" placeholder="nome">
+                <div class="invalid-feedback" *ngIf="this.registerForm.get('name')?.dirty && this.registerForm.get('name')?.hasError('required')">
+                  Nome é obrigatório.
+                </div>
+                <div class="invalid-feedback" *ngIf="this.registerForm.get('name')?.hasError('minlength')">
+                  Mínimo 3 caracteres.
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-sm-12 col-md-6 ">
+              <div class="mb-4">
+                <label for="password" class="mb-2">Defina uma senha</label>
+                  <div class="input-group">
+                    <input type="{{ showPassword ? 'text' : 'password' }}" class="form-control" formControlName="password" placeholder="senha">
+                    <i class="input-group-text bi {{icon}}" (click)="toggleVisibility('password')"></i>
+                  </div>
+                  <div class="invalid-feedback " *ngIf="this.registerForm.get('password')?.dirty && this.registerForm.get('password')?.hasError('required')">
+                    Senha é obrigatória.
+                  </div>
+                  <div class="invalid-feedback password-feedback" *ngIf="this.registerForm.get('password')?.hasError('strongPassword')">
+                    Requisito: 6 caracteres, minúsculas, maiúsculas, números e caractere especial.
+                  </div>
+              </div>
+            </div>
+            <div class="col-sm-12 col-md-6 ">
+              <div class="mb-4">
+                <label for="passwordConfirmation" class="mb-2">Confirme sua senha</label>
+                  <div class="input-group">
+                    <input type="{{ showConfirmPassword ? 'text' : 'password' }}" class="form-control" formControlName="passwordConfirmation" placeholder="confirme sua senha">
+                    <i class="input-group-text {{iconConfirmPassword}}" (click)="toggleVisibility('confirmPassword')"></i>
+                  </div>
+                  <div class="invalid-feedback" *ngIf="this.registerForm.get('passwordConfirmation')?.hasError('matchPassword')">
+                    Senhas não conferem.
+                  </div>
+              </div>
+            </div>
+          </div>
+
+          <button type="submit" class="btn btn-primary align-self-end mt-4" [disabled]="this.registerForm.invalid">Registrar</button>
+        </form>
+      </div>
+
+  </app-shell>
+</main>
