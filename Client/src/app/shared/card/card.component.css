@@ -1,0 +1,32 @@
+.card {
+  max-width: 200px;
+}
+
+.card-title {
+  color: var(--primary-color);
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.card-text {
+  font-size: 12px;
+}
+
+.card-body {
+  padding: .75rem;
+}
+
+.card-footer {
+  background-color: var(--secondary-color);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--primary-color);
+}
+
+@media (max-width: 520px) {
+  .card {
+    max-width: none;
+    width: 100%;
+  }
+
+}

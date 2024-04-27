@@ -1,1 +1,16 @@
-<p>home-screen works!</p>
+<app-header></app-header>
+
+<main>
+  <app-shell>
+      <div class="card-title">
+        <p>Bem vindo ao</p>
+        <h1 >DesafioMXM</h1>
+      </div>
+
+      <div class="card-body d-flex flex-column justify-content-center gap-5">
+        <button class="btn btn-primary" (click)="login()">Entrar</button>
+        <button class="btn btn-primary" [routerLink]="'/registrar'">Registrar</button>
+      </div>
+
+  </app-shell>
+</main>

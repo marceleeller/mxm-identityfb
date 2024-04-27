@@ -54,7 +54,7 @@ public class Config
                 RequirePkce = true,
                 AllowedScopes = { "openid", "profile", "email", "DesafioMXMAPI.read" },
                 AlwaysIncludeUserClaimsInIdToken = true,
-                RedirectUris = {"http://localhost:4200"},
+                RedirectUris = {"http://localhost:4200/auth-callback"},
                 PostLogoutRedirectUris = {"http://localhost:4200"},
                 AllowedCorsOrigins = {"http://localhost:4200"},
                 AllowAccessTokensViaBrowser = true,

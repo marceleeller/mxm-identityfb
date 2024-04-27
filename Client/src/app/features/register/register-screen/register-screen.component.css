@@ -1,0 +1,34 @@
+main {
+  background-color: var(--secondary-color);
+  height: calc(100vh - 66px);
+}
+
+.ask-title {
+  font-size: 13px;
+  margin: 0;
+  padding: 0;
+  color: gray;
+}
+
+.register-text {
+  font-size: 13px;
+  text-decoration: none;
+  color: var(--primary-color);
+}
+
+.input-group-text {
+  cursor: pointer;
+}
+
+.password-feedback {
+  width: 35%;
+  line-height: .9;
+}
+
+
+
+@media (max-width: 992px){
+  .password-feedback {
+    width: 80%;
+  }
+}
