@@ -6,7 +6,7 @@ import { AuthModule, LogLevel } from 'angular-auth-oidc-client';
     imports: [AuthModule.forRoot({
         config: {
               authority: 'https://localhost:5443',
-              redirectUrl: 'http://localhost:4200/auth-callback',
+              redirectUrl: 'https://desafiomxm.vercel.app/auth-callback',
               postLoginRoute: '/auth-callback',
               unauthorizedRoute: '/home',
               postLogoutRedirectUri: window.location.origin,
