@@ -1,13 +1,13 @@
 import { NgModule } from '@angular/core';
 import { AuthModule, LogLevel } from 'angular-auth-oidc-client';
-import { environment } from '../../environments/environment';
+import { environment } from './../../environments/environment.development';
 
 
 @NgModule({
 
     imports: [AuthModule.forRoot({
         config: {
-              authority: environment.server,
+              authority: environment.SERVER_URL,
               redirectUrl: `${window.location.origin}/auth-callback`,
               postLoginRoute: '/auth-callback',
               unauthorizedRoute: '/home',
@@ -18,7 +18,7 @@ import { environment } from '../../environments/environment';
               silentRenew: false,
               useRefreshToken: false,
               renewTimeBeforeTokenExpiresInSeconds: 30,
-              secureRoutes: [environment.apiUrl],
+              secureRoutes: [environment.API_URL],
           }
       })],
     exports: [AuthModule],
