@@ -17,19 +17,25 @@ export class MainScreenComponent {
 
   coffeeShopsList:any;
   userName!:string;
+  loading:boolean = true;
+  processing: boolean = false;
 
   constructor(private authService: AuthService) {  }
 
   ngOnInit() {
     this.authService.getCoffeeShopsList().subscribe((data) => {
       this.coffeeShopsList = data;
+      this.loading = false;
     });
     this.userName = localStorage.getItem('name') || '';
   }
 
   logout() {
-    this.authService.logout().subscribe(result => {
-      console.log(result);
+    this.processing = true;
+    this.authService.logout().subscribe({
+      error: (err) => {
+        this.processing = false;
+      }
     });
   }
 }

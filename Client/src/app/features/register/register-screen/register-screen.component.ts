@@ -16,6 +16,7 @@ export class RegisterScreenComponent {
   showConfirmPassword = false;
   icon:string = 'bi-eye-fill';
   iconConfirmPassword:string = 'bi-eye-fill'
+  processing = false;
 
   constructor(private service: AuthService, private toastr: ToastrService, private router: Router) { }
 
@@ -27,6 +28,7 @@ export class RegisterScreenComponent {
   }, { validators: matchPassword() });
 
   register() {
+    this.processing = true;
     this.service.register(this.registerForm.value).subscribe({
       next: () => {
         this.toastr.success('Usuário cadastrado com sucesso', '');
@@ -35,6 +37,7 @@ export class RegisterScreenComponent {
       error: (error:any) => {
         this.toastr.error('Falha ao registrar usuário.', '');
         console.log(error.message);
+        this.processing = false;
       }
     });
   }

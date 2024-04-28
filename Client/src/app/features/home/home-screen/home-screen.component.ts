@@ -8,10 +8,13 @@ import { LoginResponse } from 'angular-auth-oidc-client';
   styleUrl: './home-screen.component.css'
 })
 export class HomeScreenComponent {
+  processing:boolean= false;
+
   constructor(private authService: AuthService) {}
 
   login() {
     this.authService.login();
+    this.processing = true;
   }
 
 }

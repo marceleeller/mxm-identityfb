@@ -2,16 +2,19 @@
 
 <main>
   <app-shell>
-    <div class="row">
-      <div class="col-8">
-        <p>Bem vindo ao <strong>DesafioMXM</strong></p>
+
+    <div class="card-title">
+      <div class="row">
+        <div class="col-8">
+          <p>Bem vindo ao <strong>DesafioMXM</strong></p>
+        </div>
+        <div class="col-4 px-0">
+          <p class="ask-title">Já tem uma conta?</p>
+          <a routerLink="/home" class="register-text">Volte para entrar</a>
+        </div>
       </div>
-      <div class="col-4 px-0">
-        <p class="ask-title">Já tem uma conta?</p>
-        <a routerLink="/home" class="register-text">Volte para entrar</a>
-      </div>
+      <h1>Registrar</h1>
     </div>
-    <h1 class="card-title">Registrar</h1>
 
       <div class="card-body d-flex flex-column justify-content-center gap-5">
             <!-- Register form -->
@@ -70,7 +73,7 @@
             </div>
           </div>
 
-          <button type="submit" class="btn btn-primary align-self-end mt-4" [disabled]="this.registerForm.invalid">Registrar</button>
+          <button type="submit" class="btn btn-primary align-self-end mt-3" [disabled]="this.registerForm.invalid">{{ processing ? "Processando..." : "Registrar" }}</button>
         </form>
       </div>
 
