@@ -1,12 +1,14 @@
 import { NgModule } from '@angular/core';
 import { AuthModule, LogLevel } from 'angular-auth-oidc-client';
+import { environment } from '../../environments/environment';
 
 
 @NgModule({
+
     imports: [AuthModule.forRoot({
         config: {
-              authority: 'https://localhost:5443',
-              redirectUrl: 'https://desafiomxm.vercel.app/auth-callback',
+              authority: environment.server,
+              redirectUrl: `${window.location.origin}/auth-callback`,
               postLoginRoute: '/auth-callback',
               unauthorizedRoute: '/home',
               postLogoutRedirectUri: window.location.origin,
@@ -16,9 +18,10 @@ import { AuthModule, LogLevel } from 'angular-auth-oidc-client';
               silentRenew: false,
               useRefreshToken: false,
               renewTimeBeforeTokenExpiresInSeconds: 30,
-              secureRoutes: ['https://localhost:5445/api'],
+              secureRoutes: [environment.apiUrl],
           }
       })],
     exports: [AuthModule],
 })
-export class AuthConfigModule {}
+export class AuthConfigModule {
+}

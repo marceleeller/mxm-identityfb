@@ -2,6 +2,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { OidcSecurityService } from 'angular-auth-oidc-client';
 import { BehaviorSubject, Observable, catchError, filter, first, switchMap, tap } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -9,6 +10,8 @@ import { BehaviorSubject, Observable, catchError, filter, first, switchMap, tap 
 export class AuthService {
 
   private accessToken = new BehaviorSubject<string | null>(null);
+  private readonly API = `${environment.apiUrl}/coffeeshop`;
+  private readonly SERVER = `${environment.server}/api/register`;
 
   constructor(private oidcSecurityService: OidcSecurityService, private http: HttpClient) {  }
 
@@ -34,10 +37,10 @@ export class AuthService {
   }
 
   getCoffeeShopsList() {
-    return this.http.get("https://localhost:5445/api/coffeeshop");
+    return this.http.get(this.API);
   }
 
   register(data:any): Observable<any> {
-    return this.http.post<any>(`https://localhost:5443/api/register`, data).pipe(first())
+    return this.http.post<any>(this.SERVER, data).pipe(first())
   }
 }

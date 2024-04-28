@@ -24,7 +24,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\DataAcess\DataAcess.csproj" />
-    <ProjectReference Include="..\DesafioMXMAPI\DesafioMXMAPI.csproj" />
   </ItemGroup>
 
 </Project>

@@ -54,9 +54,9 @@ public class Config
                 RequirePkce = true,
                 AllowedScopes = { "openid", "profile", "email", "DesafioMXMAPI.read" },
                 AlwaysIncludeUserClaimsInIdToken = true,
-                RedirectUris = {"http://localhost:4200/auth-callback"},
-                PostLogoutRedirectUris = {"http://localhost:4200"},
-                AllowedCorsOrigins = {"http://localhost:4200"},
+                RedirectUris = {"https://desafiomxm.vercel.app/auth-callback"},
+                PostLogoutRedirectUris = {"https://desafiomxm.vercel.app"},
+                AllowedCorsOrigins = {"https://desafiomxm.vercel.app"},
                 AllowAccessTokensViaBrowser = true,
                 RequireConsent = false,
             }
